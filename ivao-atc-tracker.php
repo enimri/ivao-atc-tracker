@@ -3,7 +3,7 @@
 Plugin Name: IVAO ATC Tracker
 Description: Displays online ATCs at specific airports and allows adding/removing ATCs via a backend interface.
 Version: 1.7
-Author: Your Name
+Author: Eyad Nimri
 */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 // Enqueue admin scripts
 function ivao_atc_tracker_admin_scripts() {
-    wp_enqueue_script('ivao-atc-admin-js', plugin_dir_url(_FILE_) . 'admin.js', array('jquery'), '1.0', true);
+    wp_enqueue_script('ivao-atc-admin-js', plugin_dir_url(__FILE__) . 'admin.js', array('jquery'), '1.0', true);
 }
 add_action('admin_enqueue_scripts', 'ivao_atc_tracker_admin_scripts');
 
@@ -85,11 +85,10 @@ function fetch_ivao_atc_data() {
 
     foreach ($data['clients']['atcs'] as $atc) {
         if (in_array($atc['callsign'], $atc_list)) {
-            $online_since_utc = gmdate('Y-m-d H:i:s', $atc['time']); // Convert to UTC
             $result[] = [
                 'callsign' => $atc['callsign'],
                 'frequency' => $atc['atcSession']['frequency'],
-                'online_since' => $online_since_utc
+                'online_since' => gmdate('H:i T', $atc['time'])
             ];
         }
     }
@@ -106,7 +105,7 @@ function render_ivao_atc_tracker() {
     echo '<h2>ATC Online</h2>';
     if (!empty($data)) {
         echo '<table>';
-        echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE (UTC)</th></tr>';
+        echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE</th></tr>';
         foreach ($data as $atc) {
             echo '<tr>';
             echo '<td>' . esc_html($atc['callsign']) . '</td>';
