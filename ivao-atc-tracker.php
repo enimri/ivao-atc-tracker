@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 // Enqueue admin scripts
 function ivao_atc_tracker_admin_scripts() {
-    wp_enqueue_script('ivao-atc-admin-js', plugin_dir_url(__FILE__) . 'admin.js', array('jquery'), '1.0', true);
+    wp_enqueue_script('ivao-atc-admin-js', plugin_dir_url(_FILE_) . 'admin.js', array('jquery'), '1.0', true);
 }
 add_action('admin_enqueue_scripts', 'ivao_atc_tracker_admin_scripts');
 
@@ -85,11 +85,11 @@ function fetch_ivao_atc_data() {
 
     foreach ($data['clients']['atcs'] as $atc) {
         if (in_array($atc['callsign'], $atc_list)) {
-            $online_since_time = gmdate('H:i:s', $atc['onlineSince']); // Convert to UTC time only
+            $online_since_utc = gmdate('Y-m-d H:i:s', $atc['time']); // Convert to UTC
             $result[] = [
                 'callsign' => $atc['callsign'],
                 'frequency' => $atc['atcSession']['frequency'],
-                'online_since' => $online_since_time
+                'online_since' => $online_since_utc
             ];
         }
     }
