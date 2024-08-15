@@ -2,7 +2,7 @@
 /*
 Plugin Name: IVAO ATC Tracker
 Description: Displays online ATCs at specific airports and allows adding/removing ATCs via a backend interface.
-Version: 1.7
+Version: 1.8.1
 Author: Eyad Nimri
 */
 
@@ -70,7 +70,7 @@ function ivao_atc_list_render() {
     echo '<button id="add-atc" class="button">Add ATC</button>';
 }
 
-// Fetch IVAO ATC data
+// Fetch IVAO ATC data with METAR
 function fetch_ivao_atc_data() {
     $response = wp_remote_get('https://api.ivao.aero/v2/tracker/whazzup');
     if (is_wp_error($response)) {
@@ -85,10 +85,21 @@ function fetch_ivao_atc_data() {
 
     foreach ($data['clients']['atcs'] as $atc) {
         if (in_array($atc['callsign'], $atc_list)) {
+            $metar = '';
+            if (isset($atc['atis']['lines']) && is_array($atc['atis']['lines'])) {
+                foreach ($atc['atis']['lines'] as $line) {
+                    if (preg_match('/[A-Z]{4}\s\d{6}Z\s\d{3}\d{2}KT/', $line)) { // Basic METAR pattern
+                        $metar = $line;
+                        break;
+                    }
+                }
+            }
+
             $result[] = [
                 'callsign' => $atc['callsign'],
                 'frequency' => $atc['atcSession']['frequency'],
-                'online_since' => gmdate('H:i T', $atc['time'])
+                'online_since' => gmdate('H:i T', $atc['time']),
+                'metar' => $metar
             ];
         }
     }
@@ -96,7 +107,7 @@ function fetch_ivao_atc_data() {
     return $result;
 }
 
-// Shortcode to display ATC data
+// Shortcode to display ATC data with METAR
 function render_ivao_atc_tracker() {
     $data = fetch_ivao_atc_data();
 
@@ -105,12 +116,13 @@ function render_ivao_atc_tracker() {
     echo '<h2>ATC Online</h2>';
     if (!empty($data)) {
         echo '<table>';
-        echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE</th></tr>';
+        echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE</th><th>METAR</th></tr>';
         foreach ($data as $atc) {
             echo '<tr>';
             echo '<td>' . esc_html($atc['callsign']) . '</td>';
             echo '<td>' . esc_html($atc['frequency']) . '</td>';
             echo '<td>' . esc_html($atc['online_since']) . '</td>';
+            echo '<td>' . esc_html($atc['metar']) . '</td>';
             echo '</tr>';
         }
         echo '</table>';
@@ -121,4 +133,3 @@ function render_ivao_atc_tracker() {
     return ob_get_clean();
 }
 add_shortcode('ivao_atc_tracker', 'render_ivao_atc_tracker');
-?>
