@@ -3,7 +3,7 @@
 Plugin Name: IVAO ATC Tracker
 Description: Displays online ATCs at specific airports and allows adding/removing ATCs via a backend interface.
 Version: 1.7
-Author: Eyad Nimri
+Author: Your Name
 */
 
 if (!defined('ABSPATH')) {
@@ -85,10 +85,11 @@ function fetch_ivao_atc_data() {
 
     foreach ($data['clients']['atcs'] as $atc) {
         if (in_array($atc['callsign'], $atc_list)) {
+            $online_since_time = gmdate('H:i:s', $atc['onlineSince']); // Convert to UTC time only
             $result[] = [
                 'callsign' => $atc['callsign'],
                 'frequency' => $atc['atcSession']['frequency'],
-                'online_since' => gmdate('H:i T', $atc['time'])
+                'online_since' => $online_since_time
             ];
         }
     }
@@ -105,7 +106,7 @@ function render_ivao_atc_tracker() {
     echo '<h2>ATC Online</h2>';
     if (!empty($data)) {
         echo '<table>';
-        echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE</th></tr>';
+        echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE (UTC)</th></tr>';
         foreach ($data as $atc) {
             echo '<tr>';
             echo '<td>' . esc_html($atc['callsign']) . '</td>';
