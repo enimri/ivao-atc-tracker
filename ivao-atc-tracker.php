@@ -113,7 +113,7 @@ function render_ivao_atc_tracker() {
 
     ob_start();
     echo '<div class="ivao-atc-tracker">';
-    echo '<h2>ATC Online</h2>';
+    echo '<h2></h2>';
     if (!empty($data)) {
         echo '<table>';
         echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE</th><th>METAR</th></tr>';
