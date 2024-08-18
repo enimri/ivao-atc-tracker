@@ -1,0 +1,38 @@
+/* General styling */
+.ivao-atc-tracker table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.ivao-atc-tracker th, .ivao-atc-tracker td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Responsive styling */
+@media screen and (max-width: 768px) {
+    .ivao-atc-tracker table,
+    .ivao-atc-tracker th,
+    .ivao-atc-tracker td {
+        display: block;
+        width: 100%;
+    }
+
+    .ivao-atc-tracker th {
+        display: none; /* Hide table headers on smaller screens */
+    }
+
+    .ivao-atc-tracker td {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+    }
+
+    .ivao-atc-tracker td:before {
+        content: attr(data-label);
+        font-weight: bold;
+        flex: 1;
+    }
+}

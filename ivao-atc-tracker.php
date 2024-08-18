@@ -16,6 +16,12 @@ function ivao_atc_tracker_admin_scripts() {
 }
 add_action('admin_enqueue_scripts', 'ivao_atc_tracker_admin_scripts');
 
+// Enqueue public styles
+function ivao_atc_tracker_enqueue_styles() {
+    wp_enqueue_style('ivao-atc-tracker-css', plugin_dir_url(__FILE__) . 'style.css');
+}
+add_action('wp_enqueue_scripts', 'ivao_atc_tracker_enqueue_styles');
+
 // Register settings
 function ivao_atc_tracker_register_settings() {
     register_setting('ivao_atc_tracker_settings_group', 'ivao_atc_list');
@@ -119,10 +125,10 @@ function render_ivao_atc_tracker() {
         echo '<tr><th>CALLSIGN</th><th>FREQUENCY</th><th>ONLINE SINCE</th><th>METAR</th></tr>';
         foreach ($data as $atc) {
             echo '<tr>';
-            echo '<td>' . esc_html($atc['callsign']) . '</td>';
-            echo '<td>' . esc_html($atc['frequency']) . '</td>';
-            echo '<td>' . esc_html($atc['online_since']) . '</td>';
-            echo '<td>' . esc_html($atc['metar']) . '</td>';
+            echo '<td data-label="CALLSIGN">' . esc_html($atc['callsign']) . '</td>';
+            echo '<td data-label="FREQUENCY">' . esc_html($atc['frequency']) . '</td>';
+            echo '<td data-label="ONLINE SINCE">' . esc_html($atc['online_since']) . '</td>';
+            echo '<td data-label="METAR">' . esc_html($atc['metar']) . '</td>';
             echo '</tr>';
         }
         echo '</table>';
